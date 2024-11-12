@@ -36,6 +36,31 @@ status_file_path = "status.json"  # Archivo para el estado de imágenes
 #     image_status = {image_id: "available" for image_id in image_ids}
 #     with open(status_file_path, "w") as status_file:
 #         json.dump(image_status, status_file)
+def print_json_file(json_file_path):
+    """
+    Lee e imprime el contenido de un archivo JSON.
+
+    Args:
+        json_file_path (str): Ruta al archivo JSON.
+    """
+    with open(json_file_path, "r") as file:
+        data = json.load(file)
+        print("Contenido del archivo JSON:")
+        print(json.dumps(data, indent=4))  # Usa indentación para una impresión legible
+
+def print_directory_contents(directory_path):
+    """
+    Lista e imprime los elementos de un directorio.
+
+    Args:
+        directory_path (str): Ruta al directorio.
+    """
+    print(f"Contenido del directorio {directory_path}:")
+    for item in os.listdir(directory_path):
+        print(item)
+
+
+
 
 
 def create_image_status_file(image_folder_path, json_folder_path, status_file_path):
@@ -112,6 +137,8 @@ def get_next_available_image():
 if "current_image_id" not in st.session_state:
     st.session_state["current_image_id"] = get_next_available_image()
 
+print_json_file(status_file_path)
+print_directory_contents(image_folder_path)
 # Check if there are images to process
 if not st.session_state["current_image_id"]:
 
