@@ -38,28 +38,33 @@ status_file_path = "status.json"  # Archivo para el estado de imágenes
 #         json.dump(image_status, status_file)
 def print_json_file(json_file_path):
     """
-    Lee e imprime el contenido de un archivo JSON.
+    Lee un archivo JSON y muestra su contenido en Streamlit.
 
     Args:
         json_file_path (str): Ruta al archivo JSON.
     """
     with open(json_file_path, "r") as file:
         data = json.load(file)
-        print("Contenido del archivo JSON:")
-        print(json.dumps(data, indent=4))  # Usa indentación para una impresión legible
+        st.subheader("Contenido del archivo JSON:")
+        st.json(data)
+
+
+
 
 def print_directory_contents(directory_path):
     """
-    Lista e imprime los elementos de un directorio.
+    Lista y muestra los elementos de un directorio en Streamlit.
 
     Args:
         directory_path (str): Ruta al directorio.
     """
-    print(f"Contenido del directorio {directory_path}:")
-    for item in os.listdir(directory_path):
-        print(item)
-
-
+    st.subheader(f"Contenido del directorio {directory_path}:")
+    if os.path.isdir(directory_path):
+        items = os.listdir(directory_path)
+        for item in items:
+            st.write(item)  # Muestra cada elemento en una nueva línea
+    else:
+        st.error("El directorio especificado no existe.")
 
 
 
