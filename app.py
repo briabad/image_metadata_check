@@ -9,7 +9,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Agregar el logo de la empresa (asegúrate de tener el archivo de imagen del logo)
-logo_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/mapfre.jpg"  # Reemplaza con la ruta de tu logo
+logo_path = "mapfre.jpg"  # Reemplaza con la ruta de tu logo
 st.image(logo_path, width=200)  # Ajusta el tamaño según lo necesites
 
 st.title("Image and JSON Generator Application")
@@ -17,16 +17,16 @@ st.title("Image and JSON Generator Application")
 # Set folder paths
 image_folder_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/image"
 json_folder_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/metadata"
-config_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/config.txt"  # Path to config file with image IDs
+# config_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/config.txt"  # Path to config file with image IDs
 status_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/status.json"  # Archivo para el estado de imágenes
 
-# Load image IDs from config file
-if os.path.isfile(config_file_path):
-    with open(config_file_path, "r") as file:
-        image_ids = [line.strip() for line in file if line.strip()]  # Remove any blank lines
-else:
-    st.error("Config file with image IDs not found.")
-    st.stop()
+# # Load image IDs from config file
+# if os.path.isfile(config_file_path):
+#     with open(config_file_path, "r") as file:
+#         image_ids = [line.strip() for line in file if line.strip()]  # Remove any blank lines
+# else:
+#     st.error("Config file with image IDs not found.")
+#     st.stop()
 
 
 # # Inicializa el archivo de estado de imágenes si no existe
