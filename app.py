@@ -14,11 +14,13 @@ st.image(logo_path, width=200)  # Ajusta el tamaño según lo necesites
 
 st.title("Image and JSON Generator Application")
 
+#/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/
+
 # Set folder paths
-image_folder_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/image"
-json_folder_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/metadata"
+image_folder_path = "image"
+json_folder_path = "metadata"
 # config_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/config.txt"  # Path to config file with image IDs
-status_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/status.json"  # Archivo para el estado de imágenes
+status_file_path = "status.json"  # Archivo para el estado de imágenes
 
 # # Load image IDs from config file
 # if os.path.isfile(config_file_path):
