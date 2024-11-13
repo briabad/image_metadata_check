@@ -12,15 +12,15 @@ st.markdown("""
 logo_path = "mapfre.jpg"  # Reemplaza con la ruta de tu logo
 st.image(logo_path, width=200)  # Ajusta el tamaño según lo necesites
 
-st.title("Image and JSON Generator Application")
+st.title("Tipo de daño")
 
 #/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/
 
 # Set folder paths
-image_folder_path = "image"
-json_folder_path = "metadata"
+image_folder_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/image"
+json_folder_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/metadata"
 # config_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/config.txt"  # Path to config file with image IDs
-status_file_path = "status.json"  # Archivo para el estado de imágenes
+status_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/status.json"  # Archivo para el estado de imágenes
 
 # # Load image IDs from config file
 # if os.path.isfile(config_file_path):
@@ -142,8 +142,8 @@ def get_next_available_image():
 if "current_image_id" not in st.session_state:
     st.session_state["current_image_id"] = get_next_available_image()
 
-print_json_file(status_file_path)
-print_directory_contents(image_folder_path)
+# print_json_file(status_file_path)
+# print_directory_contents(image_folder_path)
 # Check if there are images to process
 if not st.session_state["current_image_id"]:
 
@@ -166,14 +166,17 @@ else:
 # image_zoom(image, mode="scroll", size=(800, 600), keep_aspect_ratio=False, zoom_factor=4.0, increment=0.2)
 
     # JSON fields
-    # description = st.text_input("Description")
+    description = st.text_input("Usuario")
+    id_caso = st.text_input("id_caso")
     damage_level = st.selectbox("Damage Level", ["Low", "Medium", "High"])
+    comentario = st.text_input("comentario")
 
     if st.button("Save JSON"):
         new_json_data = {
             "id": image_id,
-            # "description": description,
+            "Usuario": description,
             "damage_level": damage_level,
+            "comentario":comentario
         }
 
         os.makedirs(json_folder_path, exist_ok=True)
