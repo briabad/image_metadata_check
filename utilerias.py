@@ -154,10 +154,10 @@ def create_image_status_file_s3(image_bucket_name, image_folder_path, json_folde
 
     # List all .jpg images in the image_folder_path
     image_files = [obj.key for obj in bucket.objects.filter(Prefix=image_folder_path) if obj.key.endswith('.jpg')]
-    print(image_files)
+    print("lista de archivos",image_files)
     # List all .json metadata files in the json_folder_path
     json_files = {os.path.splitext(os.path.basename(obj.key))[0] for obj in bucket.objects.filter(Prefix=json_folder_path) if obj.key.endswith('.json')}
-    print(json_files)
+    print("lista de archivos",json_files)
     # Determine the status of each image
     for image_key in image_files:
         image_id = os.path.splitext(os.path.basename(image_key))[0]  # Extract image ID without extension
