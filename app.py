@@ -3,6 +3,7 @@ import json
 import os
 from PIL import Image
 from streamlit_image_zoom import image_zoom
+from utilerias import create_image_status_file, get_next_available_image,save_status, download_from_s3, create_image_status_file_s3
 # Agregar la línea roja en la parte superior
 st.markdown("""
     <div style="border-top: 5px solid red;"></div>
@@ -15,94 +16,19 @@ st.image(logo_path, width=200)  # Ajusta el tamaño según lo necesites
 st.title("Tipo de daño")
 
 #/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/
+# s3://detect-dano-perito-app/images/prueba/001.jpg
 
 # Set folder paths
-image_folder_path = "image"
-json_folder_path = "metadata"
+bucket_name = "detect-dano-perito-app"
+image_folder_path = "images/prueba/"
+json_folder_path = "metadata/prueba/"
 # config_file_path = "/mnt/c/Users/bmoreno/Desktop/proyectos/mapfre/app_image_metadata/config.txt"  # Path to config file with image IDs
-status_file_path = "app_image_metadata/status.json"  # Archivo para el estado de imágenes
+status_file_path = "status.json"  # Archivo para el estado de imágenes
 
-# # Load image IDs from config file
-# if os.path.isfile(config_file_path):
-#     with open(config_file_path, "r") as file:
-#         image_ids = [line.strip() for line in file if line.strip()]  # Remove any blank lines
-# else:
-#     st.error("Config file with image IDs not found.")
-#     st.stop()
-
-
-# # Inicializa el archivo de estado de imágenes si no existe
-# if not os.path.isfile(status_file_path):
-#     image_status = {image_id: "available" for image_id in image_ids}
-#     with open(status_file_path, "w") as status_file:
-#         json.dump(image_status, status_file)
-def print_json_file(json_file_path):
-    """
-    Lee un archivo JSON y muestra su contenido en Streamlit.
-
-    Args:
-        json_file_path (str): Ruta al archivo JSON.
-    """
-    with open(json_file_path, "r") as file:
-        data = json.load(file)
-        st.subheader("Contenido del archivo JSON:")
-        st.json(data)
-
-
-
-
-def print_directory_contents(directory_path):
-    """
-    Lista y muestra los elementos de un directorio en Streamlit.
-
-    Args:
-        directory_path (str): Ruta al directorio.
-    """
-    st.subheader(f"Contenido del directorio {directory_path}:")
-    if os.path.isdir(directory_path):
-        items = os.listdir(directory_path)
-        for item in items:
-            st.write(item)  # Muestra cada elemento en una nueva línea
-    else:
-        st.error("El directorio especificado no existe.")
-
-
-
-def create_image_status_file(image_folder_path, json_folder_path, status_file_path):
-    """
-    Crea un archivo JSON que contiene el estado de cada imagen en la carpeta de imágenes.
-    Si existe un archivo JSON para una imagen, el estado será "processed".
-    Si no existe, el estado será "available".
-    
-    Args:
-        image_folder_path (str): Ruta de la carpeta donde se encuentran las imágenes.
-        json_folder_path (str): Ruta de la carpeta donde se encuentran los archivos JSON de metadatos.
-        status_file_path (str): Ruta donde se guardará el archivo JSON de estado.
-    """
-    # Diccionario para almacenar el estado de cada imagen
-    image_status = {}
-    
-    # Obtener una lista de todas las imágenes en la carpeta de imágenes
-    for image_file in os.listdir(image_folder_path):
-        if image_file.endswith(".jpg"):  # Asegúrate de que sean archivos de imagen (extensión .jpg)
-            image_id = os.path.splitext(image_file)[0]  # Extraer el ID de la imagen sin extensión
-            json_path = os.path.join(json_folder_path, f"{image_id}.json")
-            
-            # Verificar si el archivo JSON asociado existe
-            if os.path.isfile(json_path):
-                image_status[image_id] = "processed"
-            else:
-                image_status[image_id] = "available"
-    
-    # Guardar el diccionario de estados en el archivo JSON
-    with open(status_file_path, "w") as status_file:
-        json.dump(image_status, status_file, indent=4)
-    
-    print(f"Archivo de estado creado en: {status_file_path}")
 
     
 if not os.path.isfile(status_file_path):
-    create_image_status_file(image_folder_path, json_folder_path, status_file_path)
+    create_image_status_file_s3(bucket_name,image_folder_path, json_folder_path, status_file_path)
 
 
 
@@ -110,40 +36,15 @@ if not os.path.isfile(status_file_path):
 with open(status_file_path, "r") as status_file:
     image_status = json.load(status_file)
 # Guardar el estado de las imágenes en el archivo JSON
-def save_status():
-    with open(status_file_path, "w") as status_file:
-        json.dump(image_status, status_file)
 
 
 
-# # Find images without an associated JSON
-# def get_images_without_json(image_ids, image_folder, json_folder):
-#     images_without_json = []
-#     for image_id in image_ids:
-#         image_path = os.path.join(image_folder, f"{image_id}.jpg")
-#         json_path = os.path.join(json_folder, f"{image_id}.json")
-#         if os.path.isfile(image_path) and not os.path.isfile(json_path):
-#             images_without_json.append(image_id)
-#     return images_without_json
-
-# images_to_process = get_images_without_json(image_ids, image_folder_path, json_folder_path)
-# # Obtener la siguiente imagen sin marcarla como "in use" todavía
-
-# Función para obtener la primera imagen disponible
-def get_next_available_image():
-    for image_id, status in image_status.items():
-        if status == "available":
-            # Marcar como "in use" para evitar acceso de otros usuarios
-            image_status[image_id] = "reserved"
-            save_status()
-            return image_id
-    return None
 
 if "current_image_id" not in st.session_state:
-    st.session_state["current_image_id"] = get_next_available_image()
+    st.session_state["current_image_id"] = get_next_available_image(image_status,status_file_path)
 
-# print_json_file(status_file_path)
-# print_directory_contents(image_folder_path)
+
+
 # Check if there are images to process
 if not st.session_state["current_image_id"]:
 
@@ -155,9 +56,12 @@ else:
 
     
     image_id = st.session_state["current_image_id"]
+
+    download_from_s3(bucket_name,f"{image_folder_path}/{image_id}.jpg", f"{image_id}.jpg" )
  
-    image_path = os.path.join(image_folder_path, f"{image_id}.jpg")
-    json_path = os.path.join(json_folder_path, f"{image_id}.json")
+    image_path = os.path.join("app", f"{image_id}.jpg")
+    json_path = os.path.join("app", f"{image_id}.json")
+    print(image_path)
     
     # Display the current image with zoom functionality
     st.subheader(f"Image ID: {image_id}")
@@ -187,7 +91,7 @@ else:
                 # Actualizar el estado a "processed"
         image_status[image_id] = "processed"
         
-        save_status()
+        save_status(status_file_path,image_status)
         
         # Actualizar a la siguiente imagen disponible
         st.session_state["current_image_id"] = get_next_available_image()
